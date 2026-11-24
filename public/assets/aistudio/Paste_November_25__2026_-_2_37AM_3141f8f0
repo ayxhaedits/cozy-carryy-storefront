@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111827">
+<title>Premium Store — Everyday Finds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-bar">
+  <span id="topBarText">✨ Welcome to our premium store — Free delivery on orders over Rs. 5,000. Shop now! ✨</span>
+</div>
+<header class="header-main" id="mainHeader">
+  <div class="wrap">
+    <div class="header-top">
+      <a href="#" class="brand-logo" onclick="setCategory('All')">
+        <div class="brand-icon" id="brandIcon">C</div>
+        <div class="brand-name" id="brandName">Store Name</div>
+      </a>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search for products, brands and more..." oninput="searchProducts()">
+      </div>
+      <div class="header-icons">
+        <button class="icon-btn" onclick="openAuthModal()">
+          <span>👤</span>
+          <span>Account</span>
+        </button>
+        <button class="icon-btn" onclick="openCartDrawer()">
+          <span>🛒</span>
+          <span>Cart</span>
+          <span class="badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <nav class="nav-bar">
+      <div class="nav-inner" id="navLinks"></div>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO SLIDER -->
+<section class="hero-section">
+  <div class="hero-slider" id="heroSlider"></div>
+  <div class="hero-nav" id="heroDots"></div>
+</section>
+
+<!-- CIRCLE CATEGORIES -->
+<section class="circle-categories">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Shop by Category</h2>
+      <p>Explore our top categories curated just for you</p>
+    </div>
+  </div>
+  <div class="circle-slider-wrapper">
+    <div class="circle-slider" id="circleSlider"></div>
+  </div>
+</section>
+
+<!-- PRODUCT CATALOG -->
+<section class="catalog-section" id="shopSection">
+  <div class="wrap">
+    <div class="section-head reveal" style="text-align: left; margin-bottom: 30px;">
+      <h2 style="font-size: 32px;" id="catalogTitle">Our Collection</h2>
+    </div>
+    <div class="filters-bar reveal">
+      <div class="filter-btns" id="filterBtns">
+        <button class="filter-btn active" onclick="setFilter('All')">All Products</button>
+        <button class="filter-btn" onclick="setFilter('New')">New Arrivals</button>
+        <button class="filter-btn" onclick="setFilter('Bestseller')">Best Sellers</button>
+        <button class="filter-btn" onclick="toggleFeaturedFilter()">⭐ Featured</button>
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="renderProducts()">
+        <option value="featured">Featured</option>
+        <option value="low-high">Price: Low to High</option>
+        <option value="high-low">Price: High to Low</option>
+      </select>
+    </div>
+    <div id="subcatFilter" style="margin-bottom:20px; display:none;"></div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</section>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button onclick="closeCartDrawer()" style="font-size: 24px;">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total:</span><span id="cartTotal">Rs. 0</span></div>
+    <button class="checkout-btn" onclick="openCheckoutModal()">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal" id="authModal">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuthModal()">×</button>
+    <h2 style="font-family:var(--font-head);text-align:center;margin-bottom:20px;" id="authTitle">Welcome Back</h2>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form class="auth-form active" id="formLogin" onsubmit="handleCustomerLogin(event)">
+      <div class="input-group"><span>✉️</span><input type="email" id="loginEmail" placeholder="Email ID" required></div>
+      <div class="input-group"><span>🔒</span><input type="password" id="loginPass" placeholder="Password" required></div>
+      <button type="submit" class="auth-btn">Login</button>
+      <div class="auth-footer">
+        <a href="#" onclick="switchAuthTab('signup')">Don't have an account? Sign up</a><br><br>
+        <a href="#" onclick="showAdminLogin()" style="color:var(--accent);font-weight:bold;">Admin Login</a>
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form class="auth-form" id="formSignup" onsubmit="handleCustomerSignup(event)">
+      <div class="input-group"><span>👤</span><input type="text" id="regName" placeholder="Full Name" required></div>
+      <div class="input-group"><span>✉️</span><input type="email" id="regEmail" placeholder="Email ID" required></div>
+      <div class="input-group"><span>🔒</span><input type="password" id="regPass" placeholder="Password" required></div>
+      <div class="input-group"><span>📞</span><input type="tel" id="regPhone" placeholder="Phone Number" required></div>
+      <button type="submit" class="auth-btn">Register</button>
+    </form>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="checkout-modal" id="checkoutModal">
+  <div class="checkout-box">
+    <button style="float:right;font-size:24px;" onclick="closeCheckoutModal()">×</button>
+    <h2>Checkout</h2>
+    <form onsubmit="placeOrder(event)">
+      <div class="form-group"><label>Full Name</label><input type="text" id="coName" required></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="coPhone" required></div>
+      <div class="form-group"><label>Delivery Address</label><textarea id="coAddress" rows="2" required></textarea></div>
+      <div class="form-group"><label>City</label><input type="text" id="coCity" required></div>
+      <div class="form-group"><label>Notes (Optional)</label><input type="text" id="coNotes"></div>
+      <button type="submit">Place Order via WhatsApp</button>
+    </form>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-overlay" id="adminOverlay" onclick="closeAdminPanel()"></div>
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-header">
+    <h2 id="adminTitle">Admin Login</h2>
+    <button onclick="closeAdminPanel()" style="font-size: 24px;">×</button>
+  </div>
+
+  <div id="adminLoginForm" style="padding: 50px; max-width: 400px; margin: auto; width: 100%;">
+    <div class="form-group"><label>Username</label><input type="text" id="adminUser" class="form-control" value="admin"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="adminPass" class="form-control" value="admin123"></div>
+    <button class="admin-btn" style="width: 100%;" onclick="loginAdmin()">Login</button>
+  </div>
+
+  <div id="adminDashboard" style="display: none; flex-direction: column; height: 100%;">
+    <div class="admin-tabs" id="adminTabs">
+      <div class="admin-tab active" onclick="switchAdminTab('overview')">Overview</div>
+      <div class="admin-tab active" onclick="switchAdminTab('products')">Products</div>
+      <div class="admin-tab" onclick="switchAdminTab('categories')">Categories</div>
+      <div class="admin-tab" onclick="switchAdminTab('branding')">Branding</div>
+      <div class="admin-tab" onclick="switchAdminTab('settings')">Settings</div>
+      <div class="admin-tab" onclick="switchAdminTab('orders')">Orders</div>
+      <div class="admin-tab" onclick="switchAdminTab('customers')">Customers</div>
+    </div>
+    <div class="admin-content" id="adminContent"></div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL (For details) -->
+<div class="auth-modal" id="productModal">
+  <div class="auth-box" style="width: min(900px, 100%); padding:0;">
+    <button class="auth-close" onclick="closeProductModal()" style="z-index:10;">×</button>
+    <div class="detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <div style="padding:20px; background:#f8fafc; border-radius:24px 0 0 24px; display:flex; align-items:center; justify-content:center;">
+        <img id="modalMainImg" src="" style="width:100%; border-radius:12px;">
+      </div>
+      <div style="padding:40px 20px;">
+        <div style="color:var(--text-muted);font-size:12px;text-transform:uppercase;font-weight:600;margin-bottom:10px;" id="modalCat"></div>
+        <h2 style="font-family:var(--font-head);font-size:28px;margin-bottom:15px;" id="modalTitle"></h2>
+        <div style="font-size:24px;font-weight:700;color:var(--accent);margin-bottom:20px;" id="modalPrice"></div>
+        <p style="color:var(--text-muted);line-height:1.6;margin-bottom:20px;" id="modalDesc"></p>
+        <div style="display:flex;gap:15px;">
+          <button class="btn-add" style="padding:15px;" onclick="addFromModal()">Add to Cart</button>
+          <button class="btn-buy" style="padding:15px;" onclick="buyFromModal()">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Action successful!</div>
+
+<script>
+/* ==========================================
+   STATE & DEFAULT DATA
+   ========================================== */
+const defaultState = {
+  products: [],
+  categories: [],
+  heroSlides: [],
+  cart: [],
+  orders: [],
+  customers: [],
+  settings: {
+    brandName: 'CozyCaryy',
+    brandIcon: 'C',
+    brandIconUrl: '',
+    primary: '#315b45',
+    accent: '#d98b55',
+    font: "'Inter', sans-serif",
+    headFont: "'Playfair Display', serif",
+    announcement: '✨ Welcome to our premium store — Free delivery on orders over Rs. 5,000. Shop now! ✨',
+    whatsapp: '923001234567'
+  }
+};
+
+// Seed Data
+const seedCategories = [
+  { name: 'Electronics', img: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=200&auto=format&fit=crop', subCats: ['Mobiles', 'Laptops', 'Headphones'] },
+  { name: 'Fashion', img: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=200&auto=format&fit=crop', subCats: ['Men', 'Women', 'Kids'] }
+];
+
+const seedProducts = [
+  { id: 1, name: 'Wireless Headphones', category: 'Electronics', subCat: 'Headphones', price: 12999, oldPrice: 15999, rating: 4.8, tag: 'Bestseller', featured: true, images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop'], desc: 'Premium wireless headphones.' },
+  { id: 2, name: 'Smart Watch', category: 'Electronics', subCat: 'Mobiles', price: 8999, oldPrice: 11999, rating: 4.9, tag: 'New', featured: true, images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop'], desc: 'Track your fitness.' }
+];
+
+const seedHero = [
+  { img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=2070&auto=format&fit=crop', title: 'Big Winter Sale', desc: 'Up to 50% off.', btn: 'Shop Now' }
+];
+
+/* ==========================================
+   INITIALIZATION
+   ========================================== */
+let state = {};
+function loadData() {
+  state = JSON.parse(localStorage.getItem('storeData')) || defaultState;
+  if (!state.products || state.products.length === 0) state.products = seedProducts;
+  if (!state.categories || state.categories.length === 0) state.categories = seedCategories;
+  if (!state.heroSlides || state.heroSlides.length === 0) state.heroSlides = seedHero;
+
+  applyTheme();
+  renderHero();
+  renderCategories();
+  renderNavLinks();
+  renderProducts();
+  updateCartCount();
+
+  setInterval(autoSlide, 5000);
+}
+
+function saveData() {
+  localStorage.setItem('storeData', JSON.stringify(state));
+}
+
+/* ==========================================
+   THEME & HEADER
+   ========================================== */
+function applyTheme() {
+  document.documentElement.style.setProperty('--primary', state.settings.primary);
+  document.documentElement.style.setProperty('--accent', state.settings.accent);
+  document.documentElement.style.setProperty('--font-body', state.settings.font);
+  document.documentElement.style.setProperty('--font-head', state.settings.headFont);
+
+  document.getElementById('brandName').textContent = state.settings.brandName;
+  document.getElementById('topBarText').textContent = state.settings.announcement;
+
+  const iconEl = document.getElementById('brandIcon');
+  if (state.settings.brandIconUrl) {
+    iconEl.innerHTML = `<img src="${state.settings.brandIconUrl}" alt="Logo">`;
+    iconEl.style.background = 'transparent';
+  } else {
+    iconEl.textContent = state.settings.brandIcon;
+    iconEl.style.background = 'var(--primary)';
+  }
+}
+
+/* ==========================================
+   RENDER STORE
+   ========================================== */
+let slideIndex = 0;
+function renderHero() {
+  document.getElementById('heroSlider').innerHTML = state.heroSlides.map(s => `
+    <div class="hero-slide">
+      <img src="${s.img}">
+      <div class="hero-content"><h1>${s.title}</h1><p>${s.desc}</p><a class="hero-btn">${s.btn}</a></div>
+    </div>
+  `).join('');
+  document.getElementById('heroDots').innerHTML = state.heroSlides.map((_, i) => 
+    `<div class="hero-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></div>`
+  ).join('');
+  goToSlide(0);
+}
+function goToSlide(i) {
+  slideIndex = i;
+  document.getElementById('heroSlider').style.transform = `translateX(-${i * 100}%)`;
+  document.querySelectorAll('.hero-dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+}
+function autoSlide() { goToSlide((slideIndex + 1) % state.heroSlides.length); }
+
+function renderCategories() {
+  const html = state.categories.map(c => `
+    <div class="circle-cat" onclick="setCategory('${c.name}')">
+      <div class="circle-img"><img src="${c.img}"></div>
+      <span>${c.name}</span>
+    </div>
+  `).join('');
+  document.getElementById('circleSlider').innerHTML = html + html;
+}
+
+function renderNavLinks() {
+  document.getElementById('navLinks').innerHTML = `<a class="nav-link active" onclick="setCategory('All')">Home</a>` + 
+    state.categories.map(c => `<a class="nav-link" onclick="setCategory('${c.name}')">${c.name}</a>`).join('');
+}
+
+let currentCategory = 'All';
+let currentSubCat = 'All';
+let currentFilter = 'All';
+let featuredOnly = false;
+let searchQuery = '';
+
+function setCategory(cat) {
+  currentCategory = cat;
+  currentSubCat = 'All';
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.textContent === (cat === 'All' ? 'Home' : cat)));
+
+  const subContainer = document.getElementById('subcatFilter');
+  if (cat !== 'All') {
+    const catObj = state.categories.find(c => c.name === cat);
+    if (catObj && catObj.subCats.length) {
+      subContainer.style.display = 'block';
+      subContainer.innerHTML = `<button class="filter-btn active" onclick="setSubCat('All')">All</button>` +
+        catObj.subCats.map(sc => `<button class="filter-btn" onclick="setSubCat('${sc}')">${sc}</button>`).join('');
+    } else subContainer.style.display = 'none';
+  } else subContainer.style.display = 'none';
+
+  renderProducts();
+  document.getElementById('shopSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function setSubCat(sc) {
+  currentSubCat = sc;
+  document.querySelectorAll('#subcatFilter .filter-btn').forEach(btn => btn.classList.toggle('active', btn.textContent === sc || (sc === 'All' && btn.textContent === 'All')));
+  renderProducts();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('#filterBtns .filter-btn').forEach(btn => btn.classList.toggle('active', btn.textContent.includes(f)));
+  renderProducts();
+}
+
+function toggleFeaturedFilter() {
+  featuredOnly = !featuredOnly;
+  document.querySelectorAll('#filterBtns .filter-btn').forEach(btn => btn.classList.toggle('active', btn.textContent.includes('Featured') && featuredOnly));
+  renderProducts();
+}
+
+function searchProducts() {
+  searchQuery = document.getElementById('searchInput').value.toLowerCase();
+  renderProducts();
+}
+
+function renderProducts() {
+  let filtered = [...state.products];
+  if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
+  if (currentSubCat !== 'All') filtered = filtered.filter(p => p.subCat === currentSubCat);
+  if (currentFilter !== 'All') filtered = filtered.filter(p => p.tag === currentFilter);
+  if (featuredOnly) filtered = filtered.filter(p => p.featured);
+  if (searchQuery) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery));
+
+  const sort = document.getElementById('sortSelect').value;
+  if (sort === 'low-high') filtered.sort((a, b) => a.price - b.price);
+  if (sort === 'high-low') filtered.sort((a, b) => b.price - a.price);
+
+  const grid = document.getElementById('productGrid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">No products found.</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card">
+      <div class="product-img-wrap" onclick="openProductModal(${p.id})">
+        <img src="${(p.coverImage || p.images[0])}">
+        ${p.tag ? `<span class="badge-tag badge-${p.tag === 'New' ? 'new' : 'best'}">${p.tag}</span>` : ''}
+        ${p.featured ? `<span class="badge-tag badge-feat" style="left:auto;right:60px;">⭐ Featured</span>` : ''}
+        <button class="heart-btn" onclick="event.stopPropagation();this.classList.toggle('active');this.textContent=this.classList.contains('active')?'♥':'♡'">♡</button>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">${p.category} ${p.subCat ? '› ' + p.subCat : ''}</div>
+        <div class="product-title" onclick="openProductModal(${p.id})">${p.name}</div>
+        <div class="product-rating">★★★★★ <span>(${p.rating})</span></div>
+        <div class="price-row">
+          <span class="price-current">Rs. ${p.price.toLocaleString()}</span>
+          ${p.oldPrice ? `<span class="price-old">Rs. ${p.oldPrice.toLocaleString()}</span>` : ''}
+        </div>
+        <div class="action-btns">
+          <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
+          <button class="btn-buy" onclick="buyNow(${p.id})">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ==========================================
+   PRODUCT MODAL
+   ========================================== */
+let modalProduct = null;
+function openProductModal(id) {
+  modalProduct = state.products.find(p => p.id === id);
+  if (!modalProduct) return;
+  document.getElementById('modalMainImg').src = (modalProduct.coverImage || modalProduct.images[0]);
+  document.getElementById('modalCat').textContent = modalProduct.category;
+  document.getElementById('modalTitle').textContent = modalProduct.name;
+  document.getElementById('modalPrice').textContent = `Rs. ${modalProduct.price.toLocaleString()}`;
+  document.getElementById('modalDesc').textContent = modalProduct.desc || 'No description available.';
+  document.getElementById('productModal').classList.add('show');
+}
+function closeProductModal() { document.getElementById('productModal').classList.remove('show'); }
+function addFromModal() { addToCart(modalProduct.id); closeProductModal(); }
+function buyFromModal() { buyNow(modalProduct.id); closeProductModal(); }
+
+/* ==========================================
+   CART & CHECKOUT
+   ========================================== */
+function addToCart(id) {
+  const item = state.cart.find(i => i.id === id);
+  if (item) item.qty++;
+  else state.cart.push({ id, qty: 1 });
+  saveData();
+  updateCartCount();
+  showToast('Added to cart!');
+}
+
+function updateCartCount() {
+  document.getElementById('cartCount').textContent = state.cart.reduce((s, i) => s + i.qty, 0);
+}
+
+function openCartDrawer() {
+  renderCartItems();
+  document.getElementById('cartDrawer').classList.add('show');
+}
+function closeCartDrawer() { document.getElementById('cartDrawer').classList.remove('show'); }
+
+function renderCartItems() {
+  const c = document.getElementById('cartItems');
+  let total = 0;
+  if (!state.cart.length) {
+    c.innerHTML = `<p style="text-align:center;color:var(--text-muted);margin-top:30px;">Cart is empty.</p>`;
+    document.getElementById('cartTotal').textContent = `Rs. 0`;
+    return;
+  }
+  c.innerHTML = state.cart.map(item => {
+    const p = state.products.find(x => x.id === item.id);
+    if (!p) return '';
+    total += p.price * item.qty;
+    return `
+      <div class="cart-item">
+        <img src="${(p.coverImage || p.images[0])}">
+        <div class="cart-item-info"><h4>${p.name}</h4><p>Rs. ${p.price} × ${item.qty}</p></div>
+        <button onclick="removeFromCart(${p.id})" style="color:#ef4444;font-size:20px;">×</button>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('cartTotal').textContent = `Rs. ${total.toLocaleString()}`;
+}
+
+function removeFromCart(id) {
+  state.cart = state.cart.filter(i => i.id !== id);
+  saveData(); updateCartCount(); renderCartItems();
+}
+
+function buyNow(id) {
+  const p = state.products.find(x => x.id === id);
+  if (!p) return;
+  const waNumber = state.settings.whatsapp;
+  const msg = `*Direct Order*%0AProduct: ${p.name}%0APrice: Rs. ${p.price}%0AQty: 1`;
+  window.open(`https://wa.me/${waNumber}?text=${msg}`, '_blank');
+}
+
+function openCheckoutModal() {
+  if (!state.cart.length) return showToast('Cart is empty!');
+  closeCartDrawer();
+  document.getElementById('checkoutModal').classList.add('show');
+}
+function closeCheckoutModal() { document.getElementById('checkoutModal').classList.remove('show'); }
+
+function placeOrder(e) {
+  e.preventDefault();
+  const total = state.cart.reduce((s, i) => {
+    const p = state.products.find(x => x.id === i.id);
+    return s + (p ? p.price * i.qty : 0);
+  }, 0);
+
+  const order = {
+    id: 'ORD' + Date.now(),
+    date: new Date().toLocaleString(),
+    name: document.getElementById('coName').value,
+    phone: document.getElementById('coPhone').value,
+    address: document.getElementById('coAddress').value,
+    city: document.getElementById('coCity').value,
+    notes: document.getElementById('coNotes').value,
+    items: state.cart.map(i => {
+      const p = state.products.find(x => x.id === i.id);
+      return { name: p.name, qty: i.qty, price: p.price };
+    }),
+    total
+  };
+
+  state.orders.unshift(order);
+  saveData();
+
+  let msg = `*New Order*%0A*Name:* ${order.name}%0A*Phone:* ${order.phone}%0A*Address:* ${order.address}, ${order.city}%0A*Notes:* ${order.notes}%0A%0A*Items:*%0A`;
+  order.items.forEach(i => msg += `• ${i.name} (x${i.qty}) — Rs. ${i.price * i.qty}%0A`);
+  msg += `%0A*Total: Rs. ${order.total}*`;
+
+  window.open(`https://wa.me/${state.settings.whatsapp}?text=${msg}`, '_blank');
+
+  state.cart = [];
+  saveData();
+  updateCartCount();
+  closeCheckoutModal();
+  showToast('Order placed!');
+}
+
+/* ==========================================
+   AUTH (Login / Register / Admin)
+   ========================================== */
+function openAuthModal() {
+  document.getElementById('authModal').classList.add('show');
+}
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('show');
+}
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+  document.getElementById('formLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('formSignup').classList.toggle('active', tab === 'signup');
+  document.getElementById('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create an Account';
+}
+
+function handleCustomerSignup(e) {
+  e.preventDefault();
+  const email = document.getElementById('regEmail').value;
+  const existing = state.customers.find(c => c.email === email);
+  if (existing) return showToast('Email already registered!');
+
+  state.customers.push({
+    name: document.getElementById('regName').value,
+    email: email,
+    pass: document.getElementById('regPass').value,
+    phone: document.getElementById('regPhone').value
+  });
+  saveData();
+  showToast('Account created! Please login.');
+  switchAuthTab('login');
+}
+
+function handleCustomerLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  const cust = state.customers.find(c => c.email === email && c.pass === pass);
+
+  if (cust) {
+    showToast('Logged in successfully!');
+    closeAuthModal();
+  } else {
+    showToast('Invalid email or password.');
+  }
+}
+
+function showAdminLogin() {
+  closeAuthModal();
+  document.getElementById('adminPanel').classList.add('show');
+  document.getElementById('adminOverlay').classList.add('show');
+  document.getElementById('adminLoginForm').style.display = 'block';
+  document.getElementById('adminDashboard').style.display = 'none';
+}
+
+/* ==========================================
+   ADMIN PANEL
+   ========================================== */
+function closeAdminPanel() {
+  document.getElementById('adminPanel').classList.remove('show');
+  document.getElementById('adminOverlay').classList.remove('show');
+}
+
+function loginAdmin() {
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  if (u === 'admin' && p === 'admin123') {
+    document.getElementById('adminLoginForm').style.display = 'none';
+    document.getElementById('adminDashboard').style.display = 'flex';
+    document.getElementById('adminTitle').textContent = 'Admin Dashboard';
+    switchAdminTab('products');
+  } else {
+    showToast('Invalid Admin Credentials!');
+  }
+}
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  const content = document.getElementById('adminContent');
+
+  if (tab === 'products') {
+    content.innerHTML = `
+      <h3 style="margin-bottom:20px;">Manage Products</h3>
+      <button class="admin-btn" style="margin-bottom:20px;" onclick="editProduct(null)">+ Add Product</button>
+      <div style="overflow-x:auto;"><table class="admin-table">
+        <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Featured</th><th>Actions</th></tr>
+        ${state.products.map(p => `
+          <tr>
+            <td><img src="${(p.coverImage || p.images[0])}"></td><td>${p.name}</td>
+            <td>${p.category} ${p.subCat ? '› ' + p.subCat : ''}</td>
+            <td>Rs. ${p.price}</td>
+            <td><button onclick="toggleFeatured(${p.id})" style="color:${p.featured ? '#f59e0b' : '#64748b'};font-weight:600;">${p.featured ? '⭐ Yes' : 'No'}</button></td>
+            <td><button onclick="editProduct(${p.id})" style="color:var(--primary);font-weight:600;">Edit</button><button onclick="deleteProduct(${p.id})" style="color:#ef4444;font-weight:600;margin-left:10px;">Delete</button></td>
+          </tr>
+        `).join('')}
+      </table></div>
+    `;
+  } else if (tab === 'categories') {
+    content.innerHTML = `
+      <h3>Categories</h3>
+      <div class="form-row" style="margin-top:20px;">
+        <div><div class="form-group"><label>Category Name</label><input type="text" id="newCatName" class="form-control"></div></div>
+        <div><div class="form-group"><label>Image URL</label><input type="url" id="newCatImg" class="form-control"></div></div>
+      </div>
+      <button class="admin-btn" onclick="addCategory()">Add Category</button>
+
+      <div class="form-row" style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
+        <div><div class="form-group"><label>Parent Category</label><select id="subCatParent" class="form-control">${state.categories.map(c => `<option>${c.name}</option>`).join('')}</select></div></div>
+        <div><div class="form-group"><label>Sub-Category Name</label><input type="text" id="newSubCatName" class="form-control"></div></div>
+      </div>
+      <button class="admin-btn" onclick="addSubCategory()">Add Sub-Category</button>
+
+      <div style="overflow-x:auto; margin-top:30px;"><table class="admin-table">
+        <tr><th>Image</th><th>Category</th><th>Sub-Categories</th><th>Action</th></tr>
+        ${state.categories.map((c, i) => `
+          <tr><td><img src="${c.img}"></td><td>${c.name}</td><td>${c.subCats.join(', ')}</td><td><button onclick="deleteCategory(${i})" style="color:#ef4444;">Delete</button></td></tr>
+        `).join('')}
+      </table></div>
+    `;
+  } else if (tab === 'branding') {
+    content.innerHTML = `
+      <h3>Branding & Theme</h3>
+      <div class="form-group"><label>Store Name</label><input type="text" id="setBrand" class="form-control" value="${state.settings.brandName}"></div>
+      <div class="form-group"><label>Announcement Text</label><input type="text" id="setAnnounce" class="form-control" value="${state.settings.announcement}"></div>
+
+      <div class="form-row">
+        <div><div class="form-group"><label>Primary Color</label><input type="color" id="setPrimary" class="form-control" value="${state.settings.primary}" style="height:50px;"></div></div>
+        <div><div class="form-group"><label>Accent Color</label><input type="color" id="setAccent" class="form-control" value="${state.settings.accent}" style="height:50px;"></div></div>
+      </div>
+
+      <div class="form-row">
+        <div><div class="form-group"><label>Body Font</label><select id="setFont" class="form-control">
+          <option value="'Inter', sans-serif" ${state.settings.font.includes('Inter') ? 'selected' : ''}>Inter</option>
+          <option value="'Poppins', sans-serif" ${state.settings.font.includes('Poppins') ? 'selected' : ''}>Poppins</option>
+          <option value="'Manrope', sans-serif" ${state.settings.font.includes('Manrope') ? 'selected' : ''}>Manrope</option>
+        </select></div></div>
+        <div><div class="form-group"><label>Heading Font</label><select id="setHeadFont" class="form-control">
+          <option value="'Playfair Display', serif" ${state.settings.headFont.includes('Playfair') ? 'selected' : ''}>Playfair Display</option>
+          <option value="'Inter', sans-serif" ${state.settings.headFont.includes('Inter') ? 'selected' : ''}>Inter</option>
+        </select></div></div>
+      </div>
+
+      <div class="form-group"><label>Logo Upload</label><input type="file" id="logoUpload" class="form-control" accept="image/*" onchange="uploadLogo(event)"></div>
+      <button class="admin-btn" onclick="saveBranding()">Save Branding</button>
+      <button class="admin-btn" style="background:#ef4444;" onclick="resetTheme()">Reset Theme Default</button>
+    `;
+  } else if (tab === 'settings') {
+    const traffic = JSON.parse(localStorage.getItem('storeTraffic')) || { total: 0 };
+    content.innerHTML = `
+      <h3>Store Settings</h3>
+      <div class="form-group"><label>WhatsApp Number</label><input type="text" id="setWa" class="form-control" value="${state.settings.whatsapp}"></div>
+      <button class="admin-btn" onclick="saveWa()">Save Settings</button>
+
+      <h3 style="margin-top:40px;">Live Traffic</h3>
+      <div style="background:#f8fafc;padding:20px;border-radius:8px;margin-top:10px;display:flex;gap:20px;">
+        <div><small>Total Visits</small><br><b style="font-size:24px;">${traffic.total}</b></div>
+      </div>
+    `;
+  } else if (tab === 'orders') {
+    content.innerHTML = `<h3>Orders</h3>` + (state.orders.length ? state.orders.map(o => `
+      <div style="border:1px solid var(--border);padding:15px;border-radius:8px;margin-top:15px;">
+        <b>${o.id} — ${o.date}</b><br>
+        <small>Name: ${o.name} | Phone: ${o.phone} | City: ${o.city}</small><br>
+        <small>Total: Rs. ${o.total}</small>
+      </div>
+    `).join('') : '<p>No orders yet.</p>');
+  } else if (tab === 'customers') {
+    content.innerHTML = `<h3>Customers</h3><div style="overflow-x:auto;"><table class="admin-table">
+      <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+      ${state.customers.map(c => `<tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>`).join('')}
+    </table></div>`;
+  }
+}
+
+/* Admin Actions */
+function editProduct(id) {
+  const p = id ? state.products.find(x => x.id === id) : null;
+  document.getElementById('adminContent').innerHTML = `
+    <h3>${id ? 'Edit' : 'Add'} Product</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Name</label><input type="text" id="epName" class="form-control" value="${p ? p.name : ''}"></div>
+      <div class="form-group"><label>Price</label><input type="number" id="epPrice" class="form-control" value="${p ? p.price : ''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label><select id="epCat" class="form-control" onchange="updateSubCatSelect(this.value)">${state.categories.map(c => `<option ${p && p.category === c.name ? 'selected' : ''}>${c.name}</option>`).join('')}</select></div>
+      <div class="form-group"><label>Sub Category</label><select id="epSubCat" class="form-control">${(state.categories.find(c => c.name === (p ? p.category : state.categories[0].name))?.subCats || []).map(sc => `<option ${p && p.subCat === sc ? 'selected' : ''}>${sc}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea id="epDesc" class="form-control">${p ? p.desc : ''}</textarea></div>
+    <div class="form-group"><label>Image URLs (1-4)</label>
+      <input type="url" id="epImg1" class="form-control" placeholder="Image 1" value="${p ? (p.coverImage || p.images[0]) : ''}" style="margin-bottom:5px;">
+      <input type="url" id="epImg2" class="form-control" placeholder="Image 2" value="${p && p.images[1] ? p.images[1] : ''}">
+    </div>
+    <div class="form-group"><label>Featured?</label><select id="epFeatured" class="form-control"><option value="false" ${p && !p.featured ? 'selected' : ''}>No</option><option value="true" ${p && p.featured ? 'selected' : ''}>Yes</option></select></div>
+    <button class="admin-btn" onclick="saveProduct(${id})">Save</button>
+  `;
+}
+
+function updateSubCatSelect(catName) {
+  const cat = state.categories.find(c => c.name === catName);
+  document.getElementById('epSubCat').innerHTML = (cat?.subCats || []).map(sc => `<option>${sc}</option>`).join('');
+}
+
+function saveProduct(id) {
+  const imgs = [document.getElementById('epImg1').value, document.getElementById('epImg2').value].filter(Boolean);
+  if (!imgs.length) return showToast('Add at least 1 image');
+
+  const newP = {
+    id: id || Date.now(),
+    name: document.getElementById('epName').value,
+    price: Number(document.getElementById('epPrice').value),
+    category: document.getElementById('epCat').value,
+    subCat: document.getElementById('epSubCat').value,
+    desc: document.getElementById('epDesc').value,
+    images: imgs,
+    featured: document.getElementById('epFeatured').value === 'true',
+    tag: 'New', rating: 4.8
+  };
+
+  if (id) state.products[state.products.findIndex(x => x.id === id)] = newP;
+  else state.products.unshift(newP);
+
+  saveData(); renderProducts(); switchAdminTab('products');
+  showToast('Product saved!');
+}
+
+function deleteProduct(id) { state.products = state.products.filter(p => p.id !== id); saveData(); renderProducts(); switchAdminTab('products'); }
+function toggleFeatured(id) { const p = state.products.find(x => x.id === id); p.featured = !p.featured; saveData(); renderProducts(); switchAdminTab('products'); }
+function addCategory() {
+  const name = document.getElementById('newCatName').value;
+  const img = document.getElementById('newCatImg').value;
+  if (name && img) { state.categories.push({ name, img, subCats: [] }); saveData(); renderCategories(); renderNavLinks(); switchAdminTab('categories'); }
+}
+function addSubCategory() {
+  const parent = document.getElementById('subCatParent').value;
+  const sub = document.getElementById('newSubCatName').value;
+  const cat = state.categories.find(c => c.name === parent);
+  if (cat && sub) { cat.subCats.push(sub); saveData(); switchAdminTab('categories'); }
+}
+function deleteCategory(i) { state.categories.splice(i, 1); saveData(); renderCategories(); renderNavLinks(); switchAdminTab('categories'); }
+function uploadLogo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => { state.settings.brandIconUrl = ev.target.result; applyTheme(); };
+  reader.readAsDataURL(file);
+}
+function saveBranding() {
+  state.settings.brandName = document.getElementById('setBrand').value;
+  state.settings.announcement = document.getElementById('setAnnounce').value;
+  state.settings.primary = document.getElementById('setPrimary').value;
+  state.settings.accent = document.getElementById('setAccent').value;
+  state.settings.font = document.getElementById('setFont').value;
+  state.settings.headFont = document.getElementById('setHeadFont').value;
+  saveData(); applyTheme(); showToast('Branding saved!');
+}
+function resetTheme() {
+  state.settings.primary = '#315b45';
+  state.settings.accent = '#d98b55';
+  state.settings.font = "'Inter', sans-serif";
+  state.settings.headFont = "'Playfair Display', serif";
+  saveData(); applyTheme(); showToast('Theme reset!');
+}
+function saveWa() { state.settings.whatsapp = document.getElementById('setWa').value; saveData(); showToast('Settings saved!'); }
+
+/* ==========================================
+   MISC & INIT
+   ========================================== */
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+window.addEventListener('scroll', () => {
+  document.getElementById('mainHeader').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// Start App
+loadData();
+
+/* ===== CozyCaryy extended admin features ===== */
+let ccAdminImages=[null,null,null,null], ccAdminCover=0, ccEditingId=null, ccAdminTab='overview';
+function ccSafe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function ccMoney(v){return 'Rs. '+Number(v||0).toLocaleString('en-PK');}
+function ccEnsure(){
+ state.settings=state.settings||{};
+ Object.assign(state.settings,{brandName:state.settings.brandName||'CozyCaryy',brandIcon:state.settings.brandIcon||'C',brandIconUrl:state.settings.brandIconUrl||'',primary:state.settings.primary||'#315b45',accent:state.settings.accent||'#d98b55',font:state.settings.font||"'Inter', sans-serif",headFont:state.settings.headFont||"'Playfair Display', serif",announcement:state.settings.announcement??'',whatsapp:state.settings.whatsapp||'923001234567'});
+ state.products=(state.products||[]).map(p=>({...p,images:(p.images&&p.images.length)?p.images:(p.img?[p.img]:[])}));
+ state.categories=(state.categories||[]).map(c=>({...c,subCats:c.subCats||[]}));
+ state.orders=state.orders||[];state.customers=state.customers||[];state.heroSlides=state.heroSlides||[];
+}
+function ccVisit(){
+ let t=JSON.parse(localStorage.getItem('storeTraffic')||'{"total":0,"daily":{}}'),d=new Date().toISOString().slice(0,10);
+ t.total=(t.total||0)+1;t.daily=t.daily||{};t.daily[d]=(t.daily[d]||0)+1;localStorage.setItem('storeTraffic',JSON.stringify(t));
+}
+function showAdminLogin(){
+ closeAuthModal();
+ document.getElementById('adminPanel').classList.add('show');
+ document.getElementById('adminOverlay').classList.add('show');
+ document.getElementById('adminLoginForm').style.display='block';
+ document.getElementById('adminDashboard').style.display='none';
+ document.getElementById('adminTitle').textContent='Admin Login';
+}
+function loginAdmin(){
+ if(document.getElementById('adminUser').value.trim()==='admin'&&document.getElementById('adminPass').value==='admin123'){
+  document.getElementById('adminLoginForm').style.display='none';
+  document.getElementById('adminDashboard').style.display='flex';
+  document.getElementById('adminTitle').textContent='CozyCaryy Admin Dashboard';
+  switchAdminTab('overview');showToast('Admin login successful');
+ }else showToast('Invalid admin credentials');
+}
+function switchAdminTab(tab){
+ ccAdminTab=tab;
+ document.querySelectorAll('#adminTabs .admin-tab').forEach(b=>b.classList.toggle('active',(b.getAttribute('onclick')||'').includes("'"+tab+"'")));
+ const el=document.getElementById('adminContent');if(!el)return;
+ if(tab==='overview'){
+  let traffic=JSON.parse(localStorage.getItem('storeTraffic')||'{"total":0,"daily":{}}'),rev=state.orders.reduce((a,o)=>a+Number(o.total||0),0);
+  el.innerHTML=`<h3>Store Overview</h3><div class="form-row">
+   <div class="admin-stat"><small>Products</small><strong>${state.products.length}</strong></div>
+   <div class="admin-stat"><small>Orders</small><strong>${state.orders.length}</strong></div>
+   <div class="admin-stat"><small>Revenue</small><strong>${ccMoney(rev)}</strong></div>
+   <div class="admin-stat"><small>Total Visits</small><strong>${traffic.total||0}</strong></div></div>
+   <div class="admin-shortcuts"><button class="admin-btn" onclick="switchAdminTab('products')">Products</button><button class="admin-btn" onclick="switchAdminTab('categories')">Categories</button><button class="admin-btn" onclick="switchAdminTab('orders')">Orders</button><button class="admin-btn" onclick="switchAdminTab('customers')">Customers</button><button class="admin-btn" onclick="switchAdminTab('branding')">Branding</button><button class="admin-btn" onclick="switchAdminTab('settings')">Settings</button></div>`;
+ }else if(tab==='products'){
+  el.innerHTML=`<h3>Product Catalogue</h3><p class="admin-help">Upload up to four images per product, select a cover image, edit prices and descriptions, and mark products as featured.</p>
+   <button class="admin-btn" onclick="editProduct(null)">+ Add Product</button>
+   <div class="table-scroll"><table class="admin-table"><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Featured</th><th>Actions</th></tr>
+   ${state.products.map(p=>`<tr><td><img src="${ccSafe(p.coverImage||p.images?.[0]||'')}"></td><td>${ccSafe(p.name)}</td><td>${ccSafe(p.category)}</td><td>${ccMoney(p.price)}</td><td><button class="admin-inline featured" onclick="toggleFeatured(${p.id})">${p.featured?'⭐ Yes':'☆ No'}</button></td><td><button class="admin-inline" onclick="editProduct(${p.id})">Edit</button><button class="admin-inline danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>`).join('')||'<tr><td colspan="6">No products yet.</td></tr>'}</table></div>`;
+ }else if(tab==='categories'){
+  el.innerHTML=`<h3>Categories</h3><form class="admin-form-block" onsubmit="addCategory(event)"><div class="form-row"><div class="form-group"><label>Category name</label><input id="newCatName" class="form-control" required></div><div class="form-group"><label>Image URL</label><input id="newCatImg" type="url" class="form-control" required></div></div><button class="admin-btn">Add Category</button></form>
+   <form class="admin-form-block" onsubmit="addSubCategory(event)"><h4>Add Sub-category</h4><div class="form-row"><div class="form-group"><label>Parent</label><select id="subCatParent" class="form-control">${state.categories.map(c=>`<option>${ccSafe(c.name)}</option>`).join('')}</select></div><div class="form-group"><label>Sub-category name</label><input id="newSubCatName" class="form-control" required></div></div><button class="admin-btn">Add Sub-category</button></form>
+   <div class="table-scroll"><table class="admin-table"><tr><th>Image</th><th>Name</th><th>Sub-categories</th><th>Action</th></tr>${state.categories.map((c,i)=>`<tr><td><img src="${ccSafe(c.img)}"></td><td>${ccSafe(c.name)}</td><td>${c.subCats.map(ccSafe).join(', ')}</td><td><button class="admin-inline danger" onclick="deleteCategory(${i})">Delete</button></td></tr>`).join('')}</table></div>`;
+ }else if(tab==='branding'){
+  let s=state.settings,h=state.heroSlides[0]||{};
+  el.innerHTML=`<h3>Branding & Live Store Design</h3><p class="admin-help">Update store name, logo, announcement, theme colors, fonts and hero banner. Saved changes are reflected on the storefront.</p>
+   <form onsubmit="saveBranding(event)">
+   <div class="form-row"><div class="form-group"><label>Store name</label><input id="setBrand" class="form-control" value="${ccSafe(s.brandName)}" required></div><div class="form-group"><label>Logo letter</label><input id="setBrandIcon" class="form-control" maxlength="3" value="${ccSafe(s.brandIcon)}"></div></div>
+   <div class="form-group"><label>Announcement bar text</label><input id="setAnnounce" class="form-control" value="${ccSafe(s.announcement)}"></div>
+   <div class="form-group"><label>Logo upload</label><div class="admin-logo-preview" id="adminLogoPreview">${s.brandIconUrl?`<img src="${s.brandIconUrl}">`:ccSafe(s.brandIcon)}</div><input type="file" class="form-control" accept="image/*" onchange="uploadLogo(event)"><button type="button" class="admin-inline danger" onclick="removeLogo()">Remove logo</button></div>
+   <div class="form-row"><div class="form-group"><label>Primary color</label><input id="setPrimary" type="color" class="form-control" value="${s.primary}"></div><div class="form-group"><label>Accent color</label><input id="setAccent" type="color" class="form-control" value="${s.accent}"></div></div>
+   <div class="form-row"><div class="form-group"><label>Body font</label><select id="setFont" class="form-control">${[["'Inter', sans-serif","Inter"],["'Poppins', sans-serif","Poppins"],["'Manrope', sans-serif","Manrope"]].map(x=>`<option value="${x[0]}" ${s.font===x[0]?'selected':''}>${x[1]}</option>`).join('')}</select></div><div class="form-group"><label>Heading font</label><select id="setHeadFont" class="form-control">${[["'Playfair Display', serif","Playfair Display"],["'Inter', sans-serif","Inter"],["'Poppins', sans-serif","Poppins"]].map(x=>`<option value="${x[0]}" ${s.headFont===x[0]?'selected':''}>${x[1]}</option>`).join('')}</select></div></div>
+   <h4 class="admin-subhead">Hero banner</h4><div class="form-group"><label>Hero title</label><input id="heroTitle" class="form-control" value="${ccSafe(h.title||'')}"></div><div class="form-group"><label>Hero description</label><textarea id="heroDesc" class="form-control">${ccSafe(h.desc||'')}</textarea></div><div class="form-row"><div class="form-group"><label>Button text</label><input id="heroBtn" class="form-control" value="${ccSafe(h.btn||'Shop Now')}"></div><div class="form-group"><label>Hero image URL</label><input id="heroImg" type="url" class="form-control" value="${ccSafe(h.img||'')}"></div></div>
+   <button class="admin-btn">Save Branding</button><button type="button" class="admin-btn btn-danger" onclick="resetTheme()">Reset Theme</button></form>`;
+ }else if(tab==='settings'){
+  let t=JSON.parse(localStorage.getItem('storeTraffic')||'{"total":0,"daily":{}}'),today=new Date().toISOString().slice(0,10);
+  let days=Object.entries(t.daily||{}).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);
+  el.innerHTML=`<h3>Store Settings</h3><form onsubmit="saveWa(event)"><div class="form-group"><label>WhatsApp order number (country code, no + or spaces)</label><input id="setWa" class="form-control" value="${ccSafe(state.settings.whatsapp)}" required></div><button class="admin-btn">Save Settings</button></form>
+   <h3 style="margin-top:30px">Live Traffic</h3><div class="form-row"><div class="admin-stat"><small>Total visits</small><strong>${t.total||0}</strong></div><div class="admin-stat"><small>Today</small><strong>${(t.daily||{})[today]||0}</strong></div><div class="admin-stat"><small>Orders</small><strong>${state.orders.length}</strong></div></div>
+   <h4 class="admin-subhead">Last 7 days</h4><div class="table-scroll"><table class="admin-table"><tr><th>Date</th><th>Visits</th></tr>${days.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join('')}</table></div>`;
+ }else if(tab==='orders'){
+  el.innerHTML=`<h3>All Orders</h3>${state.orders.map(o=>`<div class="admin-order"><div class="admin-order-head"><b>${ccSafe(o.id)}</b><b>${ccMoney(o.total)}</b></div><small>${ccSafe(o.date||'')}</small><p><b>${ccSafe(o.name)}</b> · ${ccSafe(o.phone)} · ${ccSafe(o.city)}</p><p>${ccSafe(o.address)}</p><p>${(o.items||[]).map(i=>`${ccSafe(i.name)} × ${i.qty}`).join(', ')}</p><label>Status <select class="form-control" onchange="setOrderStatus('${ccSafe(o.id)}',this.value)">${['Pending','Confirmed','Processing','Shipped','Delivered','Cancelled'].map(x=>`<option ${o.status===x?'selected':''}>${x}</option>`).join('')}</select></label></div>`).join('')||'<p>No orders yet.</p>'}`;
+ }else if(tab==='customers'){
+  el.innerHTML=`<h3>Customers</h3><div class="table-scroll"><table class="admin-table"><tr><th>Name</th><th>Email</th><th>Phone</th></tr>${state.customers.map(c=>`<tr><td>${ccSafe(c.name)}</td><td>${ccSafe(c.email)}</td><td>${ccSafe(c.phone)}</td></tr>`).join('')||'<tr><td colspan="3">No customers yet.</td></tr>'}</table></div>`;
+ }
+}
+function editProduct(id){
+ let p=id?state.products.find(x=>Number(x.id)===Number(id)):null;ccEditingId=p?p.id:null;ccAdminImages=[null,null,null,null];ccAdminCover=0;
+ if(p){(p.images||[]).slice(0,4).forEach((x,i)=>ccAdminImages[i]=x);ccAdminCover=Math.max(0,(p.images||[]).indexOf(p.coverImage||p.images?.[0]));}
+ let cat=p?.category||state.categories[0]?.name||'',sub=state.categories.find(c=>c.name===cat)?.subCats||[];
+ document.getElementById('adminContent').innerHTML=`<h3>${p?'Edit':'Add'} Product</h3><form onsubmit="saveProduct(event)">
+ <div class="form-row"><div class="form-group"><label>Name</label><input id="epName" class="form-control" required value="${ccSafe(p?.name||'')}"></div><div class="form-group"><label>Price</label><input id="epPrice" type="number" min="1" class="form-control" required value="${p?.price||''}"></div></div>
+ <div class="form-row"><div class="form-group"><label>Old price</label><input id="epOld" type="number" class="form-control" value="${p?.oldPrice||''}"></div><div class="form-group"><label>Rating</label><input id="epRating" type="number" min="0" max="5" step=".1" class="form-control" value="${p?.rating||4.8}"></div></div>
+ <div class="form-row"><div class="form-group"><label>Category</label><select id="epCat" class="form-control" onchange="updateSubCatSelect(this.value)">${state.categories.map(c=>`<option ${c.name===cat?'selected':''}>${ccSafe(c.name)}</option>`).join('')}</select></div><div class="form-group"><label>Sub-category</label><select id="epSubCat" class="form-control">${sub.map(x=>`<option ${p?.subCat===x?'selected':''}>${ccSafe(x)}</option>`).join('')}</select></div></div>
+ <div class="form-row"><div class="form-group"><label>Tag</label><select id="epTag" class="form-control">${['New','Bestseller','Popular','Sale'].map(x=>`<option ${p?.tag===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="form-group"><label>Featured</label><select id="epFeatured" class="form-control"><option value="false" ${p&&!p.featured?'selected':''}>No</option><option value="true" ${p?.featured?'selected':''}>Yes</option></select></div></div>
+ <div class="form-group"><label>Description</label><textarea id="epDesc" class="form-control">${ccSafe(p?.desc||'')}</textarea></div><div class="form-group"><label>Buy Now / Affiliate URL (optional)</label><input id="epBuy" type="url" class="form-control" value="${ccSafe(p?.buyLink||'')}"></div>
+ <div class="form-group"><label>Images (up to 4) — select ★ for cover</label><input type="file" class="form-control" accept="image/*" multiple onchange="handleProductImages(event)"><div class="admin-image-slots" id="adminImageSlots"></div></div>
+ <button class="admin-btn">${p?'Save Changes':'Add Product'}</button><button type="button" class="admin-btn btn-danger" onclick="switchAdminTab('products')">Cancel</button></form>`;
+ renderAdminImageSlots();
+}
+function renderAdminImageSlots(){let w=document.getElementById('adminImageSlots');if(!w)return;w.innerHTML=ccAdminImages.map((x,i)=>`<div class="admin-image-slot">${x?`<img src="${x}"><button type="button" onclick="removeAdminImage(${i})">×</button><button type="button" class="cover ${i===ccAdminCover?'active':''}" onclick="setAdminCover(${i})">★</button>`:`Image ${i+1}`}</div>`).join('');}
+function ccResize(file){return new Promise((resolve,reject)=>{let r=new FileReader();r.onerror=reject;r.onload=()=>{let im=new Image();im.onerror=reject;im.onload=()=>{let c=document.createElement('canvas'),scale=Math.min(1000/im.width,1000/im.height,1);c.width=im.width*scale;c.height=im.height*scale;c.getContext('2d').drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.82));};im.src=r.result;};r.readAsDataURL(file);});}
+async function handleProductImages(e){for(let f of [...e.target.files].slice(0,4)){let i=ccAdminImages.findIndex(x=>!x);if(i<0)break;try{ccAdminImages[i]=await ccResize(f);if(ccAdminImages.filter(Boolean).length===1)ccAdminCover=i;}catch(_){showToast('Image upload failed');}}renderAdminImageSlots();}
+function removeAdminImage(i){ccAdminImages[i]=null;if(ccAdminCover===i)ccAdminCover=Math.max(0,ccAdminImages.findIndex(Boolean));renderAdminImageSlots();}
+function setAdminCover(i){if(ccAdminImages[i]){ccAdminCover=i;renderAdminImageSlots();}}
+function updateSubCatSelect(cat){let el=document.getElementById('epSubCat');if(el)el.innerHTML=(state.categories.find(c=>c.name===cat)?.subCats||[]).map(x=>`<option>${ccSafe(x)}</option>`).join('');}
+function saveProduct(e){
+ e.preventDefault();let imgs=ccAdminImages.filter(Boolean);if(!imgs.length)return showToast('Upload at least one image');
+ let p={id:ccEditingId||Date.now(),name:document.getElementById('epName').value.trim(),price:Number(document.getElementById('epPrice').value),oldPrice:Number(document.getElementById('epOld').value)||0,rating:Number(document.getElementById('epRating').value)||4.8,category:document.getElementById('epCat').value,subCat:document.getElementById('epSubCat').value,tag:document.getElementById('epTag').value,featured:document.getElementById('epFeatured').value==='true',desc:document.getElementById('epDesc').value.trim(),buyLink:document.getElementById('epBuy').value.trim(),images:[ccAdminImages[ccAdminCover]||imgs[0],...imgs.filter(x=>x!==(ccAdminImages[ccAdminCover]||imgs[0]))],coverImage:ccAdminImages[ccAdminCover]||imgs[0]};
+ if(ccEditingId){let i=state.products.findIndex(x=>x.id===ccEditingId);if(i>=0)state.products[i]=p;}else state.products.unshift(p);
+ saveData();renderProducts();switchAdminTab('products');showToast('Product saved');
+}
+function deleteProduct(id){if(!confirm('Delete this product?'))return;state.products=state.products.filter(x=>Number(x.id)!==Number(id));saveData();renderProducts();switchAdminTab('products');}
+function toggleFeatured(id){let p=state.products.find(x=>Number(x.id)===Number(id));if(!p)return;p.featured=!p.featured;saveData();renderProducts();switchAdminTab('products');}
+function addCategory(e){e.preventDefault();let name=document.getElementById('newCatName').value.trim(),img=document.getElementById('newCatImg').value.trim();if(state.categories.some(c=>c.name.toLowerCase()===name.toLowerCase()))return showToast('Category already exists');state.categories.push({name,img,subCats:[]});saveData();renderCategories();renderNavLinks();switchAdminTab('categories');}
+function addSubCategory(e){e.preventDefault();let c=state.categories.find(x=>x.name===document.getElementById('subCatParent').value),n=document.getElementById('newSubCatName').value.trim();if(!c||!n)return;if(!c.subCats.includes(n))c.subCats.push(n);saveData();switchAdminTab('categories');}
+function deleteCategory(i){if(!confirm('Delete this category?'))return;state.categories.splice(i,1);saveData();renderCategories();renderNavLinks();switchAdminTab('categories');}
+async function uploadLogo(e){let f=e.target.files[0];if(!f)return;try{state.settings.brandIconUrl=await ccResize(f);saveData();applyTheme();let p=document.getElementById('adminLogoPreview');if(p)p.innerHTML=`<img src="${state.settings.brandIconUrl}">`;showToast('Logo uploaded');}catch(_){showToast('Logo upload failed');}}
+function removeLogo(){state.settings.brandIconUrl='';saveData();applyTheme();let p=document.getElementById('adminLogoPreview');if(p)p.textContent=state.settings.brandIcon||'C';}
+function saveBranding(e){e.preventDefault();let s=state.settings;s.brandName=document.getElementById('setBrand').value.trim();s.brandIcon=document.getElementById('setBrandIcon').value.trim()||'C';s.announcement=document.getElementById('setAnnounce').value.trim();s.primary=document.getElementById('setPrimary').value;s.accent=document.getElementById('setAccent').value;s.font=document.getElementById('setFont').value;s.headFont=document.getElementById('setHeadFont').value;let h=state.heroSlides[0]||{};state.heroSlides[0]={...h,title:document.getElementById('heroTitle').value.trim(),desc:document.getElementById('heroDesc').value.trim(),btn:document.getElementById('heroBtn').value.trim()||'Shop Now',img:document.getElementById('heroImg').value.trim()||h.img};saveData();applyTheme();renderHero();showToast('Store design updated');}
+function resetTheme(){if(!confirm('Reset theme colors and fonts?'))return;Object.assign(state.settings,{primary:'#315b45',accent:'#d98b55',font:"'Inter', sans-serif",headFont:"'Playfair Display', serif"});saveData();applyTheme();switchAdminTab('branding');}
+function saveWa(e){if(e)e.preventDefault();let n=document.getElementById('setWa').value.replace(/\D/g,'');if(n.length<10)return showToast('Enter a valid WhatsApp number');state.settings.whatsapp=n;saveData();showToast('Settings saved');switchAdminTab('settings');}
+function setOrderStatus(id,status){let o=state.orders.find(x=>String(x.id)===String(id));if(!o)return;o.status=status;saveData();showToast('Order status updated');}
+
+ccEnsure();
+ccVisit();
+</script>
+
+<button onclick="showAdminLogin()" style="position:fixed;right:12px;bottom:12px;z-index:1800;background:#fff;border:1px solid var(--border);color:var(--text-muted);padding:8px 13px;border-radius:30px;font-size:11px;font-weight:700;box-shadow:var(--shadow-sm)">Admin</button>
+</body>
+</html>
